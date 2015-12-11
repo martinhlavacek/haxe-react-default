@@ -15,7 +15,7 @@ Application uses those components
 
 - msignal (Massive library [msignal](https://github.com/massiveinteractive/msignal))
 - yloader (Jozef Chutka library [yloader](https://github.com/jozefchutka/YLoader))
-- react (React library [React]([React](https://facebook.github.io/react/))
+- react (React library [React](https://facebook.github.io/react/))
 
 Install all nodejs packages
 
