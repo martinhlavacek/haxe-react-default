@@ -26,7 +26,6 @@ class Root extends ReactComponentOfState<RootState>
 
     function onResponseArrived(list: ImageListItem)
     {
-        trace(list);
         setState({data:list.images });
     }
 

@@ -50,7 +50,6 @@ Root.__name__ = true;
 Root.__super__ = React.Component;
 Root.prototype = $extend(React.Component.prototype,{
 	onResponseArrived: function(list) {
-		console.log(list);
 		this.setState({ data : list.images});
 	}
 	,render: function() {
