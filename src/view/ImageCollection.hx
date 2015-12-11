@@ -1,15 +1,21 @@
 package view;
 
+import view.ImageListItemElement.ImageListItemElementProps;
 import api.react.React;
 import api.react.ReactComponent;
 import model.ImageItem;
 
-typedef ImageItemsProps ={
-    data:Array<ImageItem>
+//typedef ImageCollectionProps ={
+//    key:Int,
+//    data:Array<ImageItem>
+//}
+
+typedef ImageCollectionProps ={
+    var data:Array<ImageItem>;
 }
 
 
-class ImageAppProps extends ReactComponentOfProps<ImageItemsProps>{
+class ImageCollection extends ReactComponentOfProps<ImageCollectionProps>{
 
     public function new() {
         super();
@@ -27,7 +33,7 @@ class ImageAppProps extends ReactComponentOfProps<ImageItemsProps>{
         for (entry in props.data)
         {
             id++;
-            result.push(React.createElement(ImageListItemElement,{key:id,data: entry}));
+            result.push(React.createElement(ImageListItemElement,({key:id, data: entry}:ImageListItemElementProps)));
         }
 
         return result;

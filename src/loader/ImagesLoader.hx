@@ -4,20 +4,19 @@ import yloader.valueObject.Response;
 import yloader.impl.js.XMLHttpRequestLoader;
 import utils.Common;
 import yloader.valueObject.Request;
-import msignal.Signal.Signal0;
+import msignal.Signal;
 import model.ImageListItem;
 
 class ImagesLoader {
 
-    public var list(default, null): ImageListItem;
-    public var responseArrived = new Signal0();
+    public var responseArrived = new Signal1<ImageListItem>();
 
     public function new() {
-        loadImages();
+
 
     }
 
-    private function loadImages(){
+    public function loadImages(){
 
         var request = new Request(Common.Url);
         var xmlLoader = new XMLHttpRequestLoader(request);
@@ -28,9 +27,9 @@ class ImagesLoader {
     private function onResponse(response: Response){
         if(response.success)
         {
-            this.list = haxe.Json.parse(response.data);
+            var list = haxe.Json.parse(response.data);
 
-            responseArrived.dispatch();
+            responseArrived.dispatch(list);
         }else{
             trace("request failed");
         }

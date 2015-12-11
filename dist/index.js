@@ -23,37 +23,13 @@ HxOverrides.substr = function(s,pos,len) {
 	return s.substr(pos,len);
 };
 var Main = function() {
-	new ReactMainProps();
-	new ReactMainState();
+	ReactDOM.render(React.createElement(Root,{ }),window.document.getElementById("app"));
 };
 Main.__name__ = true;
 Main.main = function() {
 	new Main();
 };
 Math.__name__ = true;
-var ReactMainProps = function() {
-	this._imageLoader = new loader_ImagesLoader();
-	this._imageLoader.responseArrived.addOnce($bind(this,this.responseArrived));
-};
-ReactMainProps.__name__ = true;
-ReactMainProps.prototype = {
-	responseArrived: function() {
-		var list = this._imageLoader.list.images;
-		if(list != null) this.CreateReact(list);
-	}
-	,CreateReact: function(list) {
-		ReactDOM.render(React.createElement(view_ImageAppProps,{ data : list}),window.document.getElementById("app"));
-	}
-};
-var ReactMainState = function() {
-	this.CreateReact();
-};
-ReactMainState.__name__ = true;
-ReactMainState.prototype = {
-	CreateReact: function() {
-		ReactDOM.render(React.createElement(view_ImageAppState),window.document.getElementById("app2"));
-	}
-};
 var Reflect = function() { };
 Reflect.__name__ = true;
 Reflect.isFunction = function(f) {
@@ -64,6 +40,24 @@ Reflect.compareMethods = function(f1,f2) {
 	if(!Reflect.isFunction(f1) || !Reflect.isFunction(f2)) return false;
 	return f1.scope == f2.scope && f1.method == f2.method && f1.method != null;
 };
+var Root = function(props) {
+	React.Component.call(this,props);
+	this.loader = new loader_ImagesLoader();
+	this.loader.responseArrived.addOnce($bind(this,this.onResponseArrived));
+	this.loader.loadImages();
+};
+Root.__name__ = true;
+Root.__super__ = React.Component;
+Root.prototype = $extend(React.Component.prototype,{
+	onResponseArrived: function(list) {
+		console.log(list);
+		this.setState({ data : list.images});
+	}
+	,render: function() {
+		if(this.state != null && this.state.data != null) return React.createElement(view_ImageCollection,{ data : this.state.data});
+		return null;
+	}
+});
 var Std = function() { };
 Std.__name__ = true;
 Std.string = function(s) {
@@ -178,8 +172,7 @@ js_Browser.createXMLHttpRequest = function() {
 	throw new js__$Boot_HaxeError("Unable to create XMLHttpRequest object.");
 };
 var loader_ImagesLoader = function() {
-	this.responseArrived = new msignal_Signal0();
-	this.loadImages();
+	this.responseArrived = new msignal_Signal1();
 };
 loader_ImagesLoader.__name__ = true;
 loader_ImagesLoader.prototype = {
@@ -191,8 +184,8 @@ loader_ImagesLoader.prototype = {
 	}
 	,onResponse: function(response) {
 		if(response.success) {
-			this.list = JSON.parse(response.data);
-			this.responseArrived.dispatch();
+			var list = JSON.parse(response.data);
+			this.responseArrived.dispatch(list);
 		} else console.log("request failed");
 	}
 };
@@ -237,23 +230,23 @@ msignal_Signal.prototype = {
 		return null;
 	}
 };
-var msignal_Signal0 = function() {
-	msignal_Signal.call(this);
+var msignal_Signal1 = function(type) {
+	msignal_Signal.call(this,[type]);
 };
-msignal_Signal0.__name__ = true;
-msignal_Signal0.__super__ = msignal_Signal;
-msignal_Signal0.prototype = $extend(msignal_Signal.prototype,{
-	dispatch: function() {
+msignal_Signal1.__name__ = true;
+msignal_Signal1.__super__ = msignal_Signal;
+msignal_Signal1.prototype = $extend(msignal_Signal.prototype,{
+	dispatch: function(value) {
 		var slotsToProcess = this.slots;
 		while(slotsToProcess.nonEmpty) {
-			slotsToProcess.head.execute();
+			slotsToProcess.head.execute(value);
 			slotsToProcess = slotsToProcess.tail;
 		}
 	}
 	,createSlot: function(listener,once,priority) {
 		if(priority == null) priority = 0;
 		if(once == null) once = false;
-		return new msignal_Slot0(this,listener,once,priority);
+		return new msignal_Slot1(this,listener,once,priority);
 	}
 });
 var msignal_Slot = function(signal,listener,once,priority) {
@@ -275,18 +268,19 @@ msignal_Slot.prototype = {
 		return this.listener = value;
 	}
 };
-var msignal_Slot0 = function(signal,listener,once,priority) {
+var msignal_Slot1 = function(signal,listener,once,priority) {
 	if(priority == null) priority = 0;
 	if(once == null) once = false;
 	msignal_Slot.call(this,signal,listener,once,priority);
 };
-msignal_Slot0.__name__ = true;
-msignal_Slot0.__super__ = msignal_Slot;
-msignal_Slot0.prototype = $extend(msignal_Slot.prototype,{
-	execute: function() {
+msignal_Slot1.__name__ = true;
+msignal_Slot1.__super__ = msignal_Slot;
+msignal_Slot1.prototype = $extend(msignal_Slot.prototype,{
+	execute: function(value1) {
 		if(!this.enabled) return;
 		if(this.once) this.remove();
-		this.listener();
+		if(this.param != null) value1 = this.param;
+		this.listener(value1);
 	}
 });
 var msignal_SlotList = function(head,tail) {
@@ -351,12 +345,12 @@ msignal_SlotList.prototype = {
 };
 var utils_Common = function() { };
 utils_Common.__name__ = true;
-var view_ImageAppProps = function() {
+var view_ImageCollection = function() {
 	React.Component.call(this);
 };
-view_ImageAppProps.__name__ = true;
-view_ImageAppProps.__super__ = React.Component;
-view_ImageAppProps.prototype = $extend(React.Component.prototype,{
+view_ImageCollection.__name__ = true;
+view_ImageCollection.__super__ = React.Component;
+view_ImageCollection.prototype = $extend(React.Component.prototype,{
 	render: function() {
 		return React.createElement("div",{ align : "center", display : "inline-block", margin : "0 20px 0 20px"},this.createChildern());
 	}
@@ -374,38 +368,8 @@ view_ImageAppProps.prototype = $extend(React.Component.prototype,{
 		return result;
 	}
 });
-var view_ImageAppState = function() {
-	this._imageLoader = new loader_ImagesLoader();
-	React.Component.call(this);
-	this._imageLoader.responseArrived.addOnce($bind(this,this.responseArrived));
-};
-view_ImageAppState.__name__ = true;
-view_ImageAppState.__super__ = React.Component;
-view_ImageAppState.prototype = $extend(React.Component.prototype,{
-	responseArrived: function() {
-		this.setState({ data : this._imageLoader.list.images});
-	}
-	,render: function() {
-		return React.createElement("div",{ align : "center", display : "inline-block", margin : "0 20px 0 20px"},this.createChildern());
-	}
-	,createChildern: function() {
-		var result = [];
-		if(this.state != null) {
-			var id = 0;
-			var _g = 0;
-			var _g1 = this.state.data;
-			while(_g < _g1.length) {
-				var entry = _g1[_g];
-				++_g;
-				id++;
-				result.push(React.createElement(view_ImageListItemElement,{ key : id, data : entry}));
-			}
-		}
-		return result;
-	}
-});
-var view_ImageListItemElement = function() {
-	React.Component.call(this);
+var view_ImageListItemElement = function(props) {
+	React.Component.call(this,props);
 };
 view_ImageListItemElement.__name__ = true;
 view_ImageListItemElement.__super__ = React.Component;
@@ -579,9 +543,9 @@ function $bind(o,m) { if( m == null ) return null; if( m.__id__ == null ) m.__id
 String.__name__ = true;
 Array.__name__ = true;
 msignal_SlotList.NIL = new msignal_SlotList(null,null);
+Root.displayName = "Root";
 utils_Common.Url = "http://localhost:8888/images.json";
-view_ImageAppProps.displayName = "ImageAppProps";
-view_ImageAppState.displayName = "ImageAppState";
+view_ImageCollection.displayName = "ImageCollection";
 view_ImageListItemElement.displayName = "ImageListItemElement";
 Main.main();
 })(typeof console != "undefined" ? console : {log:function(){}});
