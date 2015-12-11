@@ -1,0 +1,9 @@
+-cp src
+-js src/js/index.js
+-main Main
+-D js-flatten
+-dce full
+-lib msignal
+-lib react
+-lib yloader
+-debug
