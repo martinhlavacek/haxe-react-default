@@ -7,16 +7,17 @@ import yloader.valueObject.Request;
 import msignal.Signal;
 import model.ImageListItem;
 
-class ImagesLoader {
+class ImagesLoader
+{
 
     public var responseArrived = new Signal1<ImageListItem>();
 
-    public function new() {
-
-
+    public function new()
+    {
     }
 
-    public function loadImages(){
+    public function loadImages()
+    {
 
         var request = new Request(Common.Url);
         var xmlLoader = new XMLHttpRequestLoader(request);
@@ -24,13 +25,16 @@ class ImagesLoader {
         xmlLoader.load();
     }
 
-    private function onResponse(response: Response){
+    private function onResponse(response: Response)
+    {
         if(response.success)
         {
             var list = haxe.Json.parse(response.data);
 
             responseArrived.dispatch(list);
-        }else{
+        }
+        else
+        {
             trace("request failed");
         }
     }

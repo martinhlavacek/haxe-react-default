@@ -5,7 +5,6 @@ import model.ImageListItem;
 import view.ImageCollection;
 import api.react.React;
 import api.react.ReactComponent;
-
 import loader.ImagesLoader;
 
 typedef RootState = {
@@ -13,7 +12,7 @@ typedef RootState = {
 }
 
 
-class Root extends ReactComponentOf<RootState>
+class Root extends ReactComponentOfState<RootState>
 {
     var loader: ImagesLoader;
 
@@ -33,13 +32,11 @@ class Root extends ReactComponentOf<RootState>
 
     override function render()
     {
-        if(state !=null && state.data != null){
+        if(state !=null && state.data != null)
+        {
             return React.createElement(ImageCollection,({data: state.data}:ImageCollectionProps));
         }
 
         return null;
-
     }
-
-
 }

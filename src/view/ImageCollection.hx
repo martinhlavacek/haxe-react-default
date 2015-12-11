@@ -15,18 +15,20 @@ typedef ImageCollectionProps ={
 }
 
 
-class ImageCollection extends ReactComponentOfProps<ImageCollectionProps>{
-
-    public function new() {
+class ImageCollection extends ReactComponentOfProps<ImageCollectionProps>
+{
+    public function new()
+    {
         super();
-
     }
 
-    override public function render(){
+    override public function render()
+    {
         return React.createElement("div",{align: "center", display: "inline-block",margin: "0 20px 0 20px"},createChildern());
     }
 
-    function createChildern():Array<ReactComponent>{
+    function createChildern():Array<ReactComponent>
+    {
         var result: Array<ReactComponent> = [];
         var id:Int = 0;
 
@@ -37,7 +39,6 @@ class ImageCollection extends ReactComponentOfProps<ImageCollectionProps>{
         }
 
         return result;
-
     }
 }
 
